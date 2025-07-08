@@ -1,11 +1,6 @@
-import './App.css'
+import "./App.css";
+import {Form} from "./ui/Form.tsx";
 
-function App() {
-  return (
-    <>
-
-    </>
-  )
+export function App() {
+  return <Form/>
 }
-
-export default App
