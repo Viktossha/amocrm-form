@@ -1,26 +1,52 @@
-import {Button, FormControl, FormGroup, Grid, TextField} from "@mui/material";
+import {Button, CircularProgress, FormControl, FormGroup, Grid, TextField} from "@mui/material";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import styles from './Form.module.css'
+import {useEffect, useState} from "react";
+import {selectIsLoading, sendLead} from "../model/leadSlice.ts";
+import {useDispatch, useSelector} from "react-redux";
+import type {AppDispatch} from "../store.ts";
 
-type Inputs = {
+export type Inputs = {
     name: string;
     email: string;
     phone: string;
-    price: number;
+    price: string;
+    timeOnSiteOver30: boolean
 };
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+
 export const Form = () => {
+    const isLoading = useSelector(selectIsLoading)
+    const dispatch = useAppDispatch()
+
+    const [timeOver, setTimeOver] = useState(false);
+
     const {
         register,
         handleSubmit,
         reset,
         formState: {errors},
     } = useForm<Inputs>({
-        defaultValues: {name: "", email: ""},
+        defaultValues: {name: "", email: "", timeOnSiteOver30: false},
     });
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        //тут будем диспатчить санку?
-        console.log(data);
-        reset()
+
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
+            setTimeOver(true)
+        }, 30001)
+
+        return () => clearTimeout(timeoutID)
+    }, []);
+
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        dispatch(sendLead(data))
+        reset({
+            name: '',
+            email: '',
+            phone: '',
+            price: '',
+            timeOnSiteOver30: timeOver,
+        })
     };
 
     return (
@@ -62,18 +88,23 @@ export const Form = () => {
                                 })}/>
                             {errors.phone && <span className={styles.errorMessage}>{errors.phone.message}</span>}
                             <TextField
-                                type="number"
                                 label="Цена"
                                 margin="normal"
                                 {...register("price", {
                                     required: "Обязательное поле",
                                 })}/>
                             {errors.price && <span className={styles.errorMessage}>{errors.price.message}</span>}
+                            <TextField type='hidden' {...register('timeOnSiteOver30')}/>
                             <Button type={"submit"} variant={"contained"} color={"primary"}>
                                 Отправить
                             </Button>
                         </FormGroup>
                     </form>
+                    {isLoading && (
+                        <div className={styles.circularProgressContainer}>
+                            <CircularProgress size={50} thickness={3} />
+                        </div>
+                    )}
                 </FormControl>
             </Grid>
         </Grid>

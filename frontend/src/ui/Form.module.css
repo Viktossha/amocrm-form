@@ -2,3 +2,8 @@
     color: red;
     font-size: 14px;
 }
+.circularProgressContainer {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+}
