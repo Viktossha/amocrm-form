@@ -21,71 +21,100 @@ $headers = [
 ];
 
 $data = json_decode(file_get_contents('php://input'), true);
+$name = $data['name'];
+$phone = $data['phone'];
+$email = $data['email'];
+$price = (int)$data['price'];
 
-$contactData = [
-    [
-        "name" => $data['name'],
-        "custom_fields_values" =>[
-            [
-                "field_id" => 711283,
-                "values" => [
-                    [
-                        "value" => $data['phone']
-                    ]
-                ]
-            ],
-            [
-                "field_id" => 711285,
-                "values" => [
-                    [
-                        "value" => $data['email']
-                    ]
-                ]
-            ]
-        ]
-    ],
-];
+function getContactsByQuery($query, $domain, $headers)
+{
+    $ch = curl_init("https://$domain/api/v4/contacts?query=$query");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
 
-$ch = curl_init("https://$domain/api/v4/contacts");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($contactData));
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$contactsByPhone = getContactsByQuery($phone, $domain, $headers);
+$contactsByEmail = getContactsByQuery($email, $domain, $headers);
 
-$response = curl_exec($ch);
-curl_close($ch);
-$result = json_decode($response, true);
-$contactId = $result['_embedded']['contacts'][0]['id'];
+$contactId = null;
 
-if ($contactId) {
+if (!empty($contactsByPhone['_embedded']["contacts"])) {
+    $contactId = $contactsByPhone['_embedded']['contacts'][0]['id'];
+} elseif (!empty($contactsByEmail['_embedded']["contacts"])) {
+    $contactId = $contactsByEmail['_embedded']['contacts'][0]['id'];
+}
 
-    $leadData = [
+if (is_null($contactId)) {
+    $contactData = [
         [
-            "name" => 'Заявка с формы',
-            "price" => (int) $data['price'],
-            "_embedded" => [
-                "contacts" => [
-                    ["id" => $contactId]
-                ]
-            ],
+            "name" => $name,
             "custom_fields_values" => [
                 [
-                    "field_id" => 715033,
+                    "field_id" => 711283,
                     "values" => [
                         [
-                            "value" => true
+                            "value" => $phone
                         ]
                     ]
                 ],
+                [
+                    "field_id" => 711285,
+                    "values" => [
+                        [
+                            "value" => $email
+                        ]
+                    ]
+                ]
             ]
         ],
     ];
 
-    $ch = curl_init("https://$domain/api/v4/leads");
+    $ch = curl_init("https://$domain/api/v4/contacts");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($leadData));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($contactData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
     $response = curl_exec($ch);
     curl_close($ch);
+
+    $result = json_decode($response, true);
+    $contactId = $result['_embedded']['contacts'][0]['id'];
+
 }
+
+
+$leadData = [
+    [
+        "name" => 'Заявка с формы',
+        "price" => $price,
+        "_embedded" => [
+            "contacts" => [
+                ["id" => $contactId]
+            ]
+        ],
+        "custom_fields_values" => [
+            [
+                "field_id" => 715033,
+                "values" => [
+                    [
+                        "value" => true
+                    ]
+                ]
+            ],
+        ]
+    ],
+];
+
+$ch = curl_init("https://$domain/api/v4/leads");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($leadData));
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
