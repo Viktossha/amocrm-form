@@ -82,9 +82,13 @@ export const Form = () => {
                             <TextField
                                 label="Телефон"
                                 margin="normal"
+                                placeholder={'+7'}
                                 {...register("phone", {
                                     required: "Обязательное поле",
-
+                                    pattern: {
+                                        value: /^\+?\d{10,15}$/,
+                                        message: "Введите корректный номер телефона",
+                                    },
                                 })}/>
                             {errors.phone && <span className={styles.errorMessage}>{errors.phone.message}</span>}
                             <TextField
