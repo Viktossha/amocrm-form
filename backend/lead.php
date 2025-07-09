@@ -25,6 +25,7 @@ $name = $data['name'];
 $phone = $data['phone'];
 $email = $data['email'];
 $price = (int)$data['price'];
+$timeOnSiteOver30 = $data['timeOnSiteOver30'];
 
 function getContactsByQuery($query, $domain, $headers)
 {
@@ -101,7 +102,7 @@ $leadData = [
                 "field_id" => 715033,
                 "values" => [
                     [
-                        "value" => true
+                        "value" => $timeOnSiteOver30
                     ]
                 ]
             ],
