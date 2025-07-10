@@ -105,7 +105,12 @@ export const Form = () => {
                                 margin="normal"
                                 {...register("price", {
                                     required: "Обязательное поле",
-                                })}/>
+                                    pattern: {
+                                        value: /^\d+$/,
+                                        message: "Некорректная цена",
+                                    },
+                                })}
+                                />
                             {errors.price && <span className={styles.errorMessage}>{errors.price.message}</span>}
                             <TextField type='hidden' {...register('timeOnSiteOver30')}/>
                             <Button type={"submit"} variant={"contained"} color={"primary"} disabled={isLoading}>
