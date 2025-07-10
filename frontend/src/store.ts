@@ -1,5 +1,5 @@
 import {configureStore, type ThunkDispatch, type UnknownAction} from "@reduxjs/toolkit";
-import {leadReducer, leadSlice} from "./model/leadSlice.ts";
+import {leadReducer, leadSlice} from "./leadSlice.ts";
 
 export const store = configureStore({
     reducer: {

@@ -2,7 +2,7 @@ import * as React from "react"
 import Snackbar, {type SnackbarCloseReason} from "@mui/material/Snackbar"
 import Alert from "@mui/material/Alert"
 import {useSelector} from "react-redux";
-import {selectError, setError} from "./model/leadSlice.ts";
+import {selectError, setError} from "./leadSlice.ts";
 import {useAppDispatch} from "./Form.tsx";
 
 export const ErrorSnackbar = () => {

@@ -2,9 +2,9 @@ import {Button, CircularProgress, FormControl, FormGroup, Grid, TextField} from 
 import {Controller, type SubmitHandler, useForm} from "react-hook-form";
 import styles from './Form.module.css'
 import {forwardRef, useEffect, useState} from "react";
-import {selectIsLoading, sendLead} from "../model/leadSlice.ts";
+import {selectIsLoading, sendLead} from "./leadSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
-import type {AppDispatch} from "../store.ts";
+import type {AppDispatch} from "./store.ts";
 import { IMaskInput } from 'react-imask';
 
 export type Inputs = {
@@ -112,6 +112,7 @@ export const Form = () => {
                                     <TextField
                                         {...field}
                                         label="Телефон"
+                                        margin="normal"
                                         InputProps={{inputComponent: TextMaskCustom as any}}
                                         variant="outlined"
                                         fullWidth

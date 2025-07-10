@@ -1,6 +1,6 @@
 import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
 import axios from "axios";
-import type {Inputs} from "../Form.tsx";
+import type {Inputs} from "./Form.tsx";
 
 const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })
 
