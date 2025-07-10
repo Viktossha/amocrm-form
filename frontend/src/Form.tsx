@@ -1,11 +1,11 @@
 import {Button, CircularProgress, FormControl, FormGroup, Grid, TextField} from "@mui/material";
 import {Controller, type SubmitHandler, useForm} from "react-hook-form";
 import styles from './Form.module.css'
-import {forwardRef, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {selectIsLoading, sendLead} from "./leadSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import type {AppDispatch} from "./store.ts";
-import { IMaskInput } from 'react-imask';
+import {TextMaskCustom} from "./TextMaskCustom.tsx";
 
 export type Inputs = {
     name: string;
@@ -14,26 +14,6 @@ export type Inputs = {
     price: string;
     timeOnSiteOver30: boolean
 };
-
-interface CustomProps {
-    onChange: (event: { target: { name: string; value: string } }) => void;
-    name: string;
-}
-
-const TextMaskCustom = forwardRef<HTMLInputElement, CustomProps>(
-    function TextMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        return (
-            <IMaskInput
-                {...other}
-                mask="+7 (000) 000-00-00"
-                inputRef={ref}
-                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-                overwrite
-            />
-        );
-    },
-);
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
 
@@ -108,7 +88,7 @@ export const Form = () => {
                                 rules={{
                                     required: "Обязательное поле",
                                 }}
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <TextField
                                         {...field}
                                         label="Телефон"
@@ -135,7 +115,7 @@ export const Form = () => {
                     </form>
                     {isLoading && (
                         <div className={styles.circularProgressContainer}>
-                            <CircularProgress size={50} thickness={3} />
+                            <CircularProgress size={50} thickness={3}/>
                         </div>
                     )}
                 </FormControl>
