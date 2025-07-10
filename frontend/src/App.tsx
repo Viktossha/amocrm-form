@@ -1,5 +1,11 @@
-import {Form} from "./ui/Form.tsx";
+import {Form} from "./Form.tsx";
+import {ErrorSnackbar} from "./ErrorSnackbar.tsx";
 
 export function App() {
-  return <Form/>
+    return (
+        <>
+            <Form/>
+            <ErrorSnackbar/>
+        </>
+    )
 }
