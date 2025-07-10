@@ -1,11 +1,11 @@
-FROM node:20.12.2
+FROM node:20.19.0
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json yarn.lock ./
 
-RUN npm install
+RUN yarn install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+CMD ["yarn", "run", "dev"]
