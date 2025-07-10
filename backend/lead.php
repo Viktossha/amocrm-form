@@ -142,3 +142,6 @@ if (!$response) {
 }
 curl_close($ch);
 
+http_response_code(200);
+echo json_encode(["message" => "Лид успешно создан"]);
+exit();
