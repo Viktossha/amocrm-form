@@ -61,7 +61,7 @@ if (is_null($contactId)) {
             "name" => $name,
             "custom_fields_values" => [
                 [
-                    "field_id" => $_ENV['PHONE_FIELD_ID'],
+                    "field_id" => (int)$_ENV['PHONE_FIELD_ID'],
                     "values" => [
                         [
                             "value" => $phone
@@ -69,7 +69,7 @@ if (is_null($contactId)) {
                     ]
                 ],
                 [
-                    "field_id" => $_ENV['EMAIL_FIELD_ID'],
+                    "field_id" => (int)$_ENV['EMAIL_FIELD_ID'],
                     "values" => [
                         [
                             "value" => $email
@@ -117,7 +117,7 @@ $leadData = [
         ],
         "custom_fields_values" => [
             [
-                "field_id" => $_ENV['TIME_ON_SITE_FIELD_ID'],
+                "field_id" => (int)$_ENV['TIME_ON_SITE_FIELD_ID'],
                 "values" => [
                     [
                         "value" => $timeOnSiteOver30
