@@ -1,4 +1,0 @@
-<?php
-const PHONE_FIELD_ID = 711283;
-const EMAIL_FIELD_ID = 711285;
-const TIME_ON_SITE_FIELD_ID = 715033;
