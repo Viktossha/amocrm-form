@@ -1,10 +1,11 @@
 import {Button, CircularProgress, FormControl, FormGroup, Grid, TextField} from "@mui/material";
-import {type SubmitHandler, useForm} from "react-hook-form";
+import {Controller, type SubmitHandler, useForm} from "react-hook-form";
 import styles from './Form.module.css'
-import {useEffect, useState} from "react";
+import {forwardRef, useEffect, useState} from "react";
 import {selectIsLoading, sendLead} from "../model/leadSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import type {AppDispatch} from "../store.ts";
+import { IMaskInput } from 'react-imask';
 
 export type Inputs = {
     name: string;
@@ -13,6 +14,27 @@ export type Inputs = {
     price: string;
     timeOnSiteOver30: boolean
 };
+
+interface CustomProps {
+    onChange: (event: { target: { name: string; value: string } }) => void;
+    name: string;
+}
+
+const TextMaskCustom = forwardRef<HTMLInputElement, CustomProps>(
+    function TextMaskCustom(props, ref) {
+        const { onChange, ...other } = props;
+        return (
+            <IMaskInput
+                {...other}
+                mask="+7 (000) 000-00-00"
+                inputRef={ref}
+                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+                overwrite
+            />
+        );
+    },
+);
+
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
 
 export const Form = () => {
@@ -25,6 +47,7 @@ export const Form = () => {
         register,
         handleSubmit,
         reset,
+        control,
         formState: {errors},
     } = useForm<Inputs>({
         defaultValues: {name: "", email: "", timeOnSiteOver30: false},
@@ -79,17 +102,22 @@ export const Form = () => {
                                 })}
                             />
                             {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
-                            <TextField
-                                label="Телефон"
-                                margin="normal"
-                                placeholder={'+7'}
-                                {...register("phone", {
+                            <Controller
+                                name="phone"
+                                control={control}
+                                rules={{
                                     required: "Обязательное поле",
-                                    pattern: {
-                                        value: /^\+?\d{10,15}$/,
-                                        message: "Введите корректный номер телефона",
-                                    },
-                                })}/>
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Телефон"
+                                        InputProps={{inputComponent: TextMaskCustom as any}}
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                )}
+                            />
                             {errors.phone && <span className={styles.errorMessage}>{errors.phone.message}</span>}
                             <TextField
                                 label="Цена"
@@ -99,7 +127,7 @@ export const Form = () => {
                                 })}/>
                             {errors.price && <span className={styles.errorMessage}>{errors.price.message}</span>}
                             <TextField type='hidden' {...register('timeOnSiteOver30')}/>
-                            <Button type={"submit"} variant={"contained"} color={"primary"}>
+                            <Button type={"submit"} variant={"contained"} color={"primary"} disabled={isLoading}>
                                 Отправить
                             </Button>
                         </FormGroup>
