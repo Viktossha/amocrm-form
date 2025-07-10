@@ -21,6 +21,13 @@ $headers = [
 ];
 
 $data = json_decode(file_get_contents('php://input'), true);
+
+if (!$data || !isset($data['name'], $data['phone'], $data['email'], $data['price'])) {
+    http_response_code(400);
+    echo json_encode(["message" => "Некорректные данные"]);
+    exit();
+}
+
 $name = $data['name'];
 $phone = $data['phone'];
 $email = $data['email'];
@@ -80,10 +87,21 @@ if (is_null($contactId)) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
     $response = curl_exec($ch);
+    if (!$response) {
+        http_response_code(500);
+        echo json_encode(["message" => "Ошибка при создании контакта"]);
+        exit();
+    }
     curl_close($ch);
 
     $result = json_decode($response, true);
     $contactId = $result['_embedded']['contacts'][0]['id'];
+
+    if (empty($contactId)) {
+        http_response_code(500);
+        echo json_encode(["message" => "ID контакта не получен"]);
+        exit();
+    }
 
 }
 
@@ -117,5 +135,10 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($leadData));
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 $response = curl_exec($ch);
+if (!$response) {
+    http_response_code(500);
+    echo json_encode(["message" => "Ошибка при создании лида"]);
+    exit();
+}
 curl_close($ch);
 
