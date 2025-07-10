@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/constants.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -61,7 +62,7 @@ if (is_null($contactId)) {
             "name" => $name,
             "custom_fields_values" => [
                 [
-                    "field_id" => 711283,
+                    "field_id" => PHONE_FIELD_ID,
                     "values" => [
                         [
                             "value" => $phone
@@ -69,7 +70,7 @@ if (is_null($contactId)) {
                     ]
                 ],
                 [
-                    "field_id" => 711285,
+                    "field_id" => EMAIL_FIELD_ID,
                     "values" => [
                         [
                             "value" => $email
@@ -117,7 +118,7 @@ $leadData = [
         ],
         "custom_fields_values" => [
             [
-                "field_id" => 715033,
+                "field_id" => TIME_ON_SITE_FIELD_ID,
                 "values" => [
                     [
                         "value" => $timeOnSiteOver30
